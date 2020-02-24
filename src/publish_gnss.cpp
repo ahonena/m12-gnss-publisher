@@ -11,10 +11,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include <array>
 //#define GNSS_PORT 28002;
 
 int main(){
   std::cout << "publish_gnss stub" << std::endl;
+  const int GNSS_msg_size = 156;
 
   const char* hostname=0; /* wildcard */
   const char* portname="28002";
@@ -45,6 +47,7 @@ int main(){
 
 
 
+
   while(1){
 
     char buffer[1024];
@@ -56,8 +59,16 @@ int main(){
         return -1;
     } else if (count==sizeof(buffer)) {
         fprintf(stderr, "datagram too large for buffer: truncated\n");
-    } else {
-      printf("UDP message received, length %d \n", count);
+    } else if(count==GNSS_msg_size){
+      printf("GNSS message received, length %d \n", (int) count);
+
+      std::array<char, GNSS_msg_size> raw_data;
+      std::cout << "The message is" << std::endl << std::endl;
+      for(int i = 0; i < GNSS_msg_size; i++){
+        raw_data.at(GNSS_msg_size - i - 1) = buffer[i];
+        std::cout << (uint8_t) raw_data.at(GNSS_msg_size - i - 1);
+      }
+      std::cout << std::endl << std::endl;
         //handle_datagram(buffer,count);
     }
 
