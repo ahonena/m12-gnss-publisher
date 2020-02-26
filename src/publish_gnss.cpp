@@ -12,7 +12,23 @@ http://www.microhowto.info/howto/listen_for_and_receive_udp_datagrams_in_c.html
 #include <netinet/in.h>
 
 #include <array>
-//#define GNSS_PORT 28002;
+
+
+#include "GSOF_attitude.hpp"
+#include "GSOF_attitudePlugin.hpp"
+#include "GSOF_dop.hpp"
+#include "GSOF_dopPlugin.hpp"
+#include "GSOF_llh.hpp"
+#include "GSOF_llhPlugin.hpp"
+#include "GSOF_positionsigma.hpp"
+#include "GSOF_positionsigmaPlugin.hpp"
+#include "GSOF_positiontime.hpp"
+#include "GSOF_positiontimePlugin.hpp"
+#include "GSOF_positionvcv.hpp"
+#include "GSOF_positionvcvPlugin.hpp"
+#include "GSOF_velocity.hpp"
+#include "GSOF_velocityPlugin.hpp"
+
 
 int main(){
   std::cout << "publish_gnss stub" << std::endl;
