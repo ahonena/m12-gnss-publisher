@@ -28,7 +28,11 @@ http://www.microhowto.info/howto/listen_for_and_receive_udp_datagrams_in_c.html
 #include "GSOF_positionvcvPlugin.hpp"
 #include "GSOF_velocity.hpp"
 #include "GSOF_velocityPlugin.hpp"
-
+#include <dds/domain/ddsdomain.hpp>
+#include <dds/core/ddscore.hpp>
+#include <dds/topic/ddstopic.hpp>
+#include <dds/pub/ddspub.hpp>
+#include <dds/sub/ddssub.hpp>
 
 int main(){
   std::cout << "publish_gnss stub" << std::endl;
@@ -61,6 +65,33 @@ int main(){
   }
   freeaddrinfo(res);
 
+  int dds_domain = 0;
+  dds::domain::DomainParticipant participant_m12(dds_domain);
+  dds::pub::Publisher publisher_m12(participant_m12);
+
+  dds::topic::Topic<GSOF_attitude> GSOF_attitude_topic(participant_m12, "GNSS_Attitude");
+  dds::topic::Topic<GSOF_dop> GSOF_dop_topic(participant_m12, "GNSS_DOP");
+  dds::topic::Topic<GSOF_llh> GSOF_llh_topic(participant_m12, "GNSS_LLH");
+  dds::topic::Topic<GSOF_positionsigma> GSOF_positionsigma_topic(participant_m12, "GNSS_sigma");
+  dds::topic::Topic<GSOF_positiontime> GSOF_positiontime_topic(participant_m12, "GNSS_time");
+  dds::topic::Topic<GSOF_positionvcv> GSOF_positionvcv_topic(participant_m12, "GNSS_VCV");
+  dds::topic::Topic<GSOF_velocity> GSOF_velocity_topic(participant_m12, "GNSS_velocity");
+
+  dds::pub::DataWriter<GSOF_attitude> writer_GSOF_attitude_topic(publisher_m12, GSOF_attitude_topic);
+  dds::pub::DataWriter<GSOF_dop> writer_GSOF_dop_topic(publisher_m12, GSOF_dop_topic);
+  dds::pub::DataWriter<GSOF_llh> writer_GSOF_llh_topic(publisher_m12, GSOF_llh_topic);
+  dds::pub::DataWriter<GSOF_positionsigma> writer_GSOF_positionsigma_topic(publisher_m12, GSOF_positionsigma_topic);
+  dds::pub::DataWriter<GSOF_positiontime> writer_GSOF_positiontime_topic(publisher_m12, GSOF_positiontime_topic);
+  dds::pub::DataWriter<GSOF_positionvcv> writer_GSOF_positionvcv_topic(publisher_m12, GSOF_positionvcv_topic);
+  dds::pub::DataWriter<GSOF_velocity> writer_GSOF_velocity_topic(publisher_m12, GSOF_velocity_topic);
+
+  GSOF_attitude GSOF_attitude_sample;
+  GSOF_dop GSOF_dop_sample;
+  GSOF_llh GSOF_llh_sample;
+  GSOF_positionsigma GSOF_positionsigma_sample;
+  GSOF_positiontime GSOF_positiontime_sample;
+  GSOF_positionvcv GSOF_positionvcv_sample;
+  GSOF_velocity GSOF_velocity_sample;
 
 
   bool just_once = true;
