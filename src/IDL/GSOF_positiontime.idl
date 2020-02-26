@@ -1,0 +1,8 @@
+struct GSOF_positiontime{
+long GPS_time;
+short GPS_week;
+short number_of_satellites;
+octet position_flags_1;
+octet position_flags_2;
+short init_number;
+};

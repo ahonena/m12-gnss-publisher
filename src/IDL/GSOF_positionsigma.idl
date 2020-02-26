@@ -1,0 +1,12 @@
+struct GSOF_positionsigma{
+float position_rms;
+float sigma_east;
+float sigma_north;
+float E_N_covar;
+float sigma_up;
+float semi_major_axis;
+float semi_minor_axis;
+float orientation;
+float unit_variance;
+short epochs;
+};

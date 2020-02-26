@@ -1,0 +1,11 @@
+struct GSOF_positionvcv{
+float position_RMS;
+float VCV_xx;
+float VCV_xy;
+float VCV_xz;
+float VCV_yy;
+float VCV_yz;
+float VCV_zz;
+float unitvar;
+short epochs;
+};

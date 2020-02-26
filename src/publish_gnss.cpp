@@ -83,41 +83,90 @@ int main(){
           switch(gsof_type){
             case 0x01 :
             std::cout << "GSOF message: TIME" << std::endl;
-
-
-
-
-
+            // 2-5 float, gps time
+            // 6-7 short, gps week
+            // 8 number of satellites
+            // 9 position flags 1
+            // 10 position flags 2
+            // 11 init number
             packet_offset += gsof_msg_length + 2;
             break;
 
             case 0x02 :
             std::cout << "GSOF message: LLH" << std::endl;
+            // 2-9 double, WGS-84 Latitude
+            // 10-17  double, WGS-84 Longitude
+            // 18-25 double, WGS-84 Height
             packet_offset += gsof_msg_length + 2;
             break;
 
             case 0x08 :
             std::cout << "GSOF message: Velocity" << std::endl;
+            //std::cout << "Velocity msg length: " << (int) gsof_msg_length << std::endl;
+            // 2 velocity flags
+            // 3-6 float hot speed
+            // 7-10 float heading consecutive
+            // 11-14 float vertical speed
             packet_offset += gsof_msg_length + 2;
             break;
 
             case 0x09 :
             std::cout << "GSOF message: DOP" << std::endl;
+            // 2-5 float PDOP
+            // 6-9 float HDOP
+            // 10-13 float VDOP
+            // 14-17 TDOP
             packet_offset += gsof_msg_length + 2;
             break;
 
             case 0x0C :
             std::cout << "GSOF message: SIGMA" << std::endl;
+            // 2-5 float position RMS
+            // 6-9 float sigma east
+            // 10-13 float sigma north
+            // 14-17 float cov_EN
+            // 18-21 float sigma up
+            // 22-25 float semimajoraxis
+            // 26-29 float semiminoraxis
+            // 30-33 float orientation
+            // 34-37 float univar
+            // 38-39 short epochs
             packet_offset += gsof_msg_length + 2;
             break;
 
             case 0x1B :
             std::cout << "GSOF message: Attitude" << std::endl;
+            // 2-5 long GPS time
+            // 6 flags
+            // 7 number of satellites
+            // 8 calcmode
+            // 9 unused
+            // 10-17 double pitch
+            // 18-25 double yaw
+            // 26-33 double roll
+            // 34-41 double masterslaverange
+            // 42-43 short PDOP
+            // 44-47 float pitchvar
+            // 48-51 float yawvar
+            // 52-55 float rollvar
+            // 56-59 float pitchyawcov
+            // 60-63 float pitchrollcov
+            // 64-67 float yawrollcov
+            // 68-71 float masterslaverangecov
             packet_offset += gsof_msg_length + 2;
             break;
 
             case 0x0B :
             std::cout << "GSOF message: Position VCV" << std::endl;
+            // 2-5 float position RMS
+            // 6-9 float VCVxx
+            // 10-13 float VCVxy
+            // 14-17 float VCVxz
+            // 18-21 float VCVyy
+            // 22-25 float VCVyz
+            // 26-29 float VCVzz
+            // 30-33 float unitvar
+            // 34-35 short epochs
             packet_offset += gsof_msg_length + 2;
             break;
 

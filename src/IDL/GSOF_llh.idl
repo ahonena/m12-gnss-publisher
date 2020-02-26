@@ -1,0 +1,5 @@
+struct GSOF_llh{
+double latitude;
+double longitude;
+double height;
+};

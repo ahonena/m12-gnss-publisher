@@ -1,0 +1,6 @@
+struct GSOF_velocity{
+octet velocity_flags;
+float horizontal_speed;
+float heading_consecutive;
+float vertical_speed;
+};

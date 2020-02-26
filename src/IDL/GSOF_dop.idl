@@ -1,0 +1,6 @@
+struct GSOF_dop{
+float PDOP;
+float HDOP;
+float VDOP;
+float TDOP;
+};

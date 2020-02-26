@@ -1,0 +1,18 @@
+struct GSOF_attitude{
+long GPS_time;
+octet flags;
+short number_of_satellites;
+octet calcmode;
+double pitch;
+double yaw;
+double roll;
+double ms_range;
+short PDOP;
+float pitch_var;
+float yaw_var;
+float roll_var;
+float pitch_yaw_covar;
+float pitch_roll_covar;
+float yaw_roll_covar;
+float ms_range_covar;
+};
