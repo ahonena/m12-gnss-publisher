@@ -114,6 +114,8 @@ int main(){
       printf("GNSS message received, length %d \n", (int) count);
       int GNSS_msg_size = count;
       uint8_t report_packet_type = buffer[2];
+      //std::cout << "REcord packet type: ";
+      //std::cout << std::hex << int(report_packet_type) << std::endl;
       if(report_packet_type != 0x40){
         std::cout << "Received report packet was not of type 0x40" << std::endl;
       }
@@ -126,24 +128,104 @@ int main(){
         while(packet_offset < GNSS_msg_size - 2){
           uint8_t gsof_type = buffer[packet_offset];
           uint8_t gsof_msg_length = buffer[packet_offset+1];
+
+          // TIME
+          uint8_t gps_time_raw[4];
+          int32_t gps_time = 0;
+
+          uint8_t gps_week_raw[2];
+          int16_t gps_week = 0;
+
+          uint8_t number_of_satellites = 0;
+          uint8_t posflags1 = 0x00;
+          uint8_t posflags2 = 0x00;
+
+          // LLH
+          uint8_t latitude_raw[8];
+          double latitude = 0;
+
+          uint8_t longitude_raw[8];
+          double longitude = 0;
+
+          uint8_t height_raw[8];
+          double height = 0;
+
+          // velocity
+          uint8_t velocity_flags;
+
+          uint8_t horizontal_speed_raw[4];
+          float horizontal_speed;
+
+          uint8_t heading_consecutive_raw[4];
+          float heading_consecutive;
+
+          uint8_t vertical_speed_raw[4];
+          float vertical_speed;
+
           std::cout << "packet_offset: " << packet_offset << std::endl;
           switch(gsof_type){
             case 0x01 :
             std::cout << "GSOF message: TIME" << std::endl;
-            // 2-5 float, gps time
+
+            // 2-5 long, gps time
+            //std::cout << "sizeof long: " << sizeof(long) << std::endl;
+            //memcpy(&gps_time, buffer + packet_offset + 2, sizeof(int32_t));
+            /*
+            gps_time =  uint32_t(buffer[packet_offset+2]) |
+            uint32_t(buffer[packet_offset+3] << 8) |
+            uint32_t(buffer[packet_offset+4] << 16) |
+            uint32_t(buffer[packet_offset+5] << 24);
+            */
+            gps_time_raw[3] = buffer[packet_offset+2];
+            gps_time_raw[2] = buffer[packet_offset + 3];
+            gps_time_raw[1] = buffer[packet_offset+4];
+            gps_time_raw[0] = buffer[packet_offset + 5];
+            memcpy(&gps_time, gps_time_raw, 4);
+            printf("GPS TIME: %d \n", gps_time);
+            //std::cout << "GPS time: " << gps_time << std::endl;
             // 6-7 short, gps week
+            //gps_week = int(buffer[packet_offset+7] << 8 | (int) buffer[packet_offset+8]);
+            gps_week_raw[1] = buffer[packet_offset+6];
+            gps_week_raw[0] = buffer[packet_offset+7];
+
+            memcpy(&gps_week, gps_week_raw, 2);
+            std::cout << "GPS week: " << gps_week << std::endl;
             // 8 number of satellites
+            number_of_satellites = buffer[packet_offset+8];
+            std::cout << "number of satellites: " << int(number_of_satellites) << std::endl;
             // 9 position flags 1
+            posflags1 = buffer[packet_offset + 9];
+            //std::cout << "posflags1 ";
+            //std::cout << std::hex << posflags1 << std::endl;
             // 10 position flags 2
+            posflags2 = buffer[packet_offset + 10];
             // 11 init number
             packet_offset += gsof_msg_length + 2;
             break;
 
             case 0x02 :
             std::cout << "GSOF message: LLH" << std::endl;
+
             // 2-9 double, WGS-84 Latitude
             // 10-17  double, WGS-84 Longitude
             // 18-25 double, WGS-84 Height
+
+            for(int i = 0; i < 8; i++){
+              latitude_raw[7-i] = buffer[packet_offset + 2 + i];
+              longitude_raw[7-i] = buffer[packet_offset + 10 + i];
+              height_raw[7-i] = buffer[packet_offset + 18 + i];
+            }
+
+            memcpy(&latitude, latitude_raw, 8);
+            memcpy(&longitude, longitude_raw, 8);
+            memcpy(&height, height_raw, 8);
+
+
+            std::cout << "Latitude: " << latitude << std::endl;
+            std::cout << "Longitude: " << longitude << std::endl;
+            std::cout << "Height: " << height << std::endl;
+
+
             packet_offset += gsof_msg_length + 2;
             break;
 
@@ -151,9 +233,20 @@ int main(){
             std::cout << "GSOF message: Velocity" << std::endl;
             //std::cout << "Velocity msg length: " << (int) gsof_msg_length << std::endl;
             // 2 velocity flags
-            // 3-6 float hot speed
+            velocity_flags = buffer[packet_offset + 2];
+            // 3-6 float horizontal speed
             // 7-10 float heading consecutive
             // 11-14 float vertical speed
+            for(int i = 0; i < 4; i++){
+              horizontal_speed_raw[3-i] = buffer[packet_offset + 3 + i];
+              heading_consecutive_raw[3-i] = buffer[packet_offset + 7 + i];
+              vertical_speed_raw[3-i] = buffer[packet_offset + 11 + i];
+
+            }
+            memcpy(&horizontal_speed, horizontal_speed_raw, 4);
+            memcpy(&heading_consecutive, heading_consecutive_raw, 4);
+            memcpy(&vertical_speed, vertical_speed_raw, 4);
+
             packet_offset += gsof_msg_length + 2;
             break;
 
