@@ -313,6 +313,9 @@ int main(){
           #endif
 
           switch(gsof_type){
+//------------------------------------------------------------------------------
+
+
             case 0x01 :
             #ifdef PRINT_STUFF
             std::cout << "GSOF message: TIME" << std::endl;
@@ -331,6 +334,7 @@ int main(){
             gps_time_raw[1] = buffer[packet_offset+4];
             gps_time_raw[0] = buffer[packet_offset + 5];
             memcpy(&gps_time, gps_time_raw, 4);
+            GSOF_positiontime_sample.GPS_time(gps_time);
             #ifdef PRINT_STUFF
             printf("GPS TIME: %d \n", gps_time);
             #endif
@@ -341,22 +345,28 @@ int main(){
             gps_week_raw[0] = buffer[packet_offset+7];
 
             memcpy(&gps_week, gps_week_raw, 2);
-
+            GSOF_positiontime_sample.GPS_week(gps_week);
             // 8 number of satellites
             number_of_satellites = buffer[packet_offset+8];
+            GSOF_positiontime_sample.number_of_satellites(number_of_satellites);
             #ifdef PRINT_STUFF
             std::cout << "GPS week: " << gps_week << std::endl;
             std::cout << "number of satellites: " << int(number_of_satellites) << std::endl;
             #endif
             // 9 position flags 1
             posflags1 = buffer[packet_offset + 9];
+            GSOF_positiontime_sample.position_flags_1(posflags1);
             //std::cout << "posflags1 ";
             //std::cout << std::hex << posflags1 << std::endl;
             // 10 position flags 2
             posflags2 = buffer[packet_offset + 10];
+            GSOF_positiontime_sample.position_flags_1(posflags2);
             // 11 init number
+            writer_GSOF_positiontime_topic.write(GSOF_positiontime_sample);
             packet_offset += gsof_msg_length + 2;
             break;
+//------------------------------------------------------------------------------
+
 
             case 0x02 :
             #ifdef PRINT_STUFF
@@ -376,15 +386,20 @@ int main(){
             memcpy(&latitude, latitude_raw, 8);
             memcpy(&longitude, longitude_raw, 8);
             memcpy(&height, height_raw, 8);
+            GSOF_llh_sample.latitude(latitude);
+            GSOF_llh_sample.longitude(longitude);
+            GSOF_llh_sample.height(height);
 
             #ifdef PRINT_STUFF
             std::cout << "Latitude: " << latitude << std::endl;
             std::cout << "Longitude: " << longitude << std::endl;
             std::cout << "Height: " << height << std::endl;
             #endif
-
+            writer_GSOF_llh_topic.write(GSOF_llh_sample);
             packet_offset += gsof_msg_length + 2;
             break;
+//------------------------------------------------------------------------------
+
 
             case 0x08 :
             #ifdef PRINT_STUFF
@@ -393,6 +408,7 @@ int main(){
             //std::cout << "Velocity msg length: " << (int) gsof_msg_length << std::endl;
             // 2 velocity flags
             velocity_flags = buffer[packet_offset + 2];
+            GSOF_velocity_sample.velocity_flags(velocity_flags);
             // 3-6 float horizontal speed
             // 7-10 float heading consecutive
             // 11-14 float vertical speed
@@ -405,6 +421,9 @@ int main(){
             memcpy(&horizontal_speed, horizontal_speed_raw, 4);
             memcpy(&heading_consecutive, heading_consecutive_raw, 4);
             memcpy(&vertical_speed, vertical_speed_raw, 4);
+            GSOF_velocity_sample.horizontal_speed(horizontal_speed);
+            GSOF_velocity_sample.heading_consecutive(heading_consecutive);
+            GSOF_velocity_sample.vertical_speed(vertical_speed);
 
             #ifdef PRINT_STUFF
             std::cout << "horizontal_speed: " << horizontal_speed << std::endl;
@@ -412,8 +431,11 @@ int main(){
             std::cout << "vertical_speed: " << vertical_speed << std::endl;
             #endif
 
+            writer_GSOF_velocity_topic.write(GSOF_velocity_sample);
             packet_offset += gsof_msg_length + 2;
             break;
+//------------------------------------------------------------------------------
+
 
             case 0x09 :
             #ifdef PRINT_STUFF
@@ -433,15 +455,22 @@ int main(){
             memcpy(&HDOP, HDOP_raw, 4);
             memcpy(&VDOP, VDOP_raw, 4);
             memcpy(&TDOP, TDOP_raw, 4);
+            GSOF_dop_sample.PDOP(PDOP);
+            GSOF_dop_sample.HDOP(HDOP);
+            GSOF_dop_sample.VDOP(VDOP);
+            GSOF_dop_sample.TDOP(TDOP);
+
             #ifdef PRINT_STUFF
             std::cout << "PDOP: " << PDOP << std::endl;
             std::cout << "HDOP: " << HDOP << std::endl;
             std::cout << "VDOP: " << VDOP << std::endl;
             std::cout << "TDOP: " << TDOP << std::endl;
             #endif
-
+            writer_GSOF_dop_topic.write(GSOF_dop_sample);
             packet_offset += gsof_msg_length + 2;
             break;
+//------------------------------------------------------------------------------
+
 
             case 0x0C :
             #ifdef PRINT_STUFF
@@ -480,12 +509,23 @@ int main(){
             memcpy(&orientation, orientation_raw,4);
             memcpy(&univar, univar_raw,4);
 
+            GSOF_positionsigma_sample.position_rms(position_RMS);
+            GSOF_positionsigma_sample.sigma_east(sigma_east);
+            GSOF_positionsigma_sample.sigma_north(sigma_north);
+            GSOF_positionsigma_sample.E_N_covar(cov_EN);
+            GSOF_positionsigma_sample.sigma_up(sigma_up);
+            GSOF_positionsigma_sample.semi_major_axis(semimajoraxis);
+            GSOF_positionsigma_sample.semi_minor_axis(semiminoraxis);
+            GSOF_positionsigma_sample.orientation(orientation);
+            GSOF_positionsigma_sample.unit_variance(univar);
             // 38-39 short epochs
 
             epochs_raw[1] = buffer[packet_offset + 38];
             epochs_raw[0] = buffer[packet_offset + 39];
 
             memcpy(&epochs, epochs_raw,2);
+
+            GSOF_positionsigma_sample.epochs(epochs);
 
             #ifdef PRINT_STUFF
             std::cout << "position_RMS: " << position_RMS << std::endl;
@@ -500,8 +540,12 @@ int main(){
 
             #endif
 
+            writer_GSOF_positionsigma_topic.write(GSOF_positionsigma_sample);
+
             packet_offset += gsof_msg_length + 2;
             break;
+//------------------------------------------------------------------------------
+
 
             case 0x1B :
             #ifdef PRINT_STUFF
@@ -510,6 +554,7 @@ int main(){
             // 2-5 long GPS time
             // 6 flags
             attitude_flags = buffer[packet_offset + 6];
+            GSOF_attitude_sample.flags(attitude_flags);
             // 7 number of satellites
             // 8 calcmode
             // 9 unused
@@ -524,6 +569,10 @@ int main(){
             memcpy(&pitch, pitch_raw, 8);
             memcpy(&yaw, yaw_raw, 8);
             memcpy(&roll, roll_raw, 8);
+
+            GSOF_attitude_sample.pitch(pitch);
+            GSOF_attitude_sample.yaw(yaw);
+            GSOF_attitude_sample.roll(roll);
 
             #ifdef PRINT_STUFF
             std::cout << "pitch: " << pitch << std::endl;
@@ -553,6 +602,13 @@ int main(){
             memcpy(&pitchrollcov, pitchrollcov_raw, 4);
             memcpy(&yawrollcov, yawrollcov_raw, 4);
 
+            GSOF_attitude_sample.pitch_var(pitchvar);
+            GSOF_attitude_sample.yaw_var(yawvar);
+            GSOF_attitude_sample.roll_var(rollvar);
+            GSOF_attitude_sample.pitch_yaw_covar(pitchyawcov);
+            GSOF_attitude_sample.pitch_roll_covar(pitchrollcov);
+            GSOF_attitude_sample.yaw_roll_covar(yawrollcov);
+
             #ifdef PRINT_STUFF
             std::cout << "pitchvar: " << pitchvar << std::endl;
             std::cout << "yawvar: " << yawvar << std::endl;
@@ -562,9 +618,12 @@ int main(){
             std::cout << "yawrollcov: " << yawrollcov << std::endl;
             #endif
 
+            writer_GSOF_attitude_topic.write(GSOF_attitude_sample);
             // 68-71 float masterslaverangecov
             packet_offset += gsof_msg_length + 2;
             break;
+//------------------------------------------------------------------------------
+
 
             case 0x0B :
             std::cout << "GSOF message: Position VCV" << std::endl;
@@ -591,8 +650,18 @@ int main(){
             memcpy(&VCVxy, VCVxy_raw, 4);
             memcpy(&VCVxz, VCVxz_raw, 4);
             memcpy(&VCVyy, VCVyy_raw, 4);
+            memcpy(&VCVyz, VCVyz_raw, 4);
             memcpy(&VCVzz, VCVzz_raw, 4);
             memcpy(&VCVunitvar, VCVunitvar_raw, 4);
+
+            GSOF_positionvcv_sample.position_RMS(VCVpositionRMS);
+            GSOF_positionvcv_sample.VCV_xx(VCVxx);
+            GSOF_positionvcv_sample.VCV_xy(VCVxy);
+            GSOF_positionvcv_sample.VCV_xz(VCVxz);
+            GSOF_positionvcv_sample.VCV_yy(VCVyy);
+            GSOF_positionvcv_sample.VCV_yz(VCVyz);
+            GSOF_positionvcv_sample.VCV_zz(VCVzz);
+            GSOF_positionvcv_sample.unitvar(VCVunitvar);
 
             #ifdef PRINT_STUFF
             std::cout << "VCVpositionRMS: " << VCVpositionRMS << std::endl;
@@ -605,8 +674,11 @@ int main(){
 
             #endif
             // 34-35 short epochs
+            writer_GSOF_positionvcv_topic.write(GSOF_positionvcv_sample);
             packet_offset += gsof_msg_length + 2;
             break;
+//------------------------------------------------------------------------------
+
 
             default:
             #ifdef PRINT_STUFF
