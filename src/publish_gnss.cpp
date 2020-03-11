@@ -34,7 +34,7 @@ http://www.microhowto.info/howto/listen_for_and_receive_udp_datagrams_in_c.html
 #include <dds/pub/ddspub.hpp>
 #include <dds/sub/ddssub.hpp>
 
-#define PRINT_STUFF
+//#define PRINT_STUFF
 
 int main(){
   std::cout << "publish_gnss stub" << std::endl;
@@ -626,7 +626,9 @@ int main(){
 
 
             case 0x0B :
+            #ifdef PRINT_STUFF
             std::cout << "GSOF message: Position VCV" << std::endl;
+            #endif
             // 2-5 float position RMS
             // 6-9 float VCVxx
             // 10-13 float VCVxy
