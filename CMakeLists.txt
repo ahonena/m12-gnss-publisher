@@ -6,8 +6,12 @@ find_package(RTIConnextDDS REQUIRED
 HINTS ${CMAKE_SOURCE_DIR})
 
 
+set(M12_TYPEDIR
+${CMAKE_SOURCE_DIR}/src/m12-idl/IDL
+)
+
 set(DDS_TYPE_OBJECT_DIR
-${CMAKE_SOURCE_DIR}/src/IDL/M12Typelib/objs
+${M12_TYPEDIR}/M12Typelib/objs
 )
 
 #
@@ -34,7 +38,7 @@ target_compile_definitions(publish_gnss PUBLIC
 
 target_include_directories( publish_gnss PRIVATE
   ${CMAKE_SOURCE_DIR}/src
-  ${CMAKE_SOURCE_DIR}/src/IDL/M12Typelib/include
+  ${M12_TYPEDIR}/M12Typelib/include
   ${CONNEXTDDS_INCLUDE_DIRS}
 )
 
