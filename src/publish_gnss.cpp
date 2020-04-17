@@ -74,7 +74,7 @@ int main(){
   dds::domain::DomainParticipant participant_m12(dds_domain);
   dds::pub::Publisher publisher_m12(participant_m12);
 
-  dds::topic::Topic<GSOF_M12> GSOF_M12_topic(participant_m12, "M12_");
+  dds::topic::Topic<GSOF_M12> GSOF_M12_topic(participant_m12, "M12_GNSS");
   /*
   dds::topic::Topic<GSOF_attitude> GSOF_attitude_topic(participant_m12, "GNSS_Attitude");
   dds::topic::Topic<GSOF_dop> GSOF_dop_topic(participant_m12, "GNSS_DOP");
