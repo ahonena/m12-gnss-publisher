@@ -1,3 +1,4 @@
+// Copyright: (c)  2020 Andrei Ahonen
 /* Looked example from:
 http://www.microhowto.info/howto/listen_for_and_receive_udp_datagrams_in_c.html
 */
